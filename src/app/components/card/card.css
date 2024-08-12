@@ -75,8 +75,21 @@ a {
 
 .front h2 {
   font-size: 1.4em;
+  display: flex;
   font-weight: 300;
   color: #5b5b5b;
+  align-items: center;
+  justify-content: center;
+  margin-top: 10rem;
+}
+.back h2 {
+  font-size: 1.4em;
+  display: flex;
+  font-weight: 300;
+  color: #5b5b5b;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6rem;
 }
 
 .front h3 {
