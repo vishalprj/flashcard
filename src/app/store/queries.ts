@@ -37,3 +37,8 @@ export const useUpdateCard = () => {
     },
   });
 };
+
+// add card
+export const addCard = (data: any) => {
+  return axios.post("/api/addcard", data);
+};

@@ -1,6 +1,11 @@
 "use client";
 import { useState } from "react";
-import { useGetCardData, useUpdateCard } from "@/app/store/queries";
+import {
+  addCard,
+  useAddCard,
+  useGetCardData,
+  useUpdateCard,
+} from "@/app/store/queries";
 import "./card.css";
 import {
   Dialog,
@@ -9,6 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import toast from "react-hot-toast";
 
 const Card = () => {
   const { data } = useGetCardData();
@@ -23,7 +29,6 @@ const Card = () => {
       setCurrentIndex((prevIndex) => prevIndex + 1);
     }
   };
-
   const handlePrev = () => {
     if (currentIndex > 0) {
       setCurrentIndex((prevIndex) => prevIndex - 1);
@@ -38,6 +43,16 @@ const Card = () => {
     };
     updateCard(updatedCard);
     setIsDialogOpen(false);
+  };
+
+  const handleAddCard = async () => {
+    const updateData = {
+      question,
+      answer,
+    };
+    await addCard(updateData);
+    setIsDialogOpen(false);
+    toast.success("New card added successfully");
   };
 
   if (!data) return null;
@@ -95,6 +110,35 @@ const Card = () => {
                 />
                 <button className="save-button" onClick={handleEdit}>
                   Save
+                </button>
+              </div>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger className="dialog-trigger add">Add</DialogTrigger>
+          <DialogContent className="dialog-content">
+            <DialogHeader className="dialog-header">
+              <DialogTitle className="dialog-title">Add Card</DialogTitle>
+              <div className="dialog-body">
+                <label className="dialog-label">Question</label>
+                <input
+                  type="text"
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  placeholder="Edit question"
+                  className="dialog-input"
+                />
+                <label className="dialog-label">Answer</label>
+                <input
+                  type="text"
+                  value={answer}
+                  onChange={(e) => setAnswer(e.target.value)}
+                  placeholder="Edit answer"
+                  className="dialog-input"
+                />
+                <button className="save-button" onClick={handleAddCard}>
+                  Add New Card
                 </button>
               </div>
             </DialogHeader>
