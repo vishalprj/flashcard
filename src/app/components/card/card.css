@@ -4,21 +4,25 @@
   box-sizing: border-box;
   font-family: "Poppins", sans-serif;
 }
+
 body {
   background-color: #000000;
 }
+
 .wrapper {
   position: absolute;
   transform: translate(-50%, -50%);
   top: 50%;
   left: 50%;
 }
+
 .container {
   height: 23.5em;
   width: 18.75em;
   position: relative;
   perspective: 37.5em;
 }
+
 a {
   background-color: #303030;
   display: block;
@@ -31,15 +35,18 @@ a {
   font-weight: 500;
   box-shadow: 0 10px #000000;
 }
+
 .card {
   height: inherit;
   width: inherit;
   transform-style: preserve-3d;
   transition: 0.5s;
 }
+
 .card:hover {
   transform: rotateY(180deg);
 }
+
 .front,
 .back {
   background-color: #ffffff;
@@ -49,6 +56,7 @@ a {
   border-radius: 1em;
   backface-visibility: hidden;
 }
+
 .front img {
   display: block;
   position: relative;
@@ -56,28 +64,34 @@ a {
   border-radius: 1em;
   margin: 2em auto 1em auto;
 }
+
 .front h2,
 .front h3,
 .front h6 {
   text-align: center;
 }
+
 .front h2 {
   font-size: 1.4em;
   font-weight: 300;
   color: #5b5b5b;
 }
+
 .front h3 {
   font-size: 1em;
   font-weight: 500;
 }
+
 .front h6 {
   color: #a0a0a0;
   font-weight: 500;
   letter-spacing: 0.1em;
 }
+
 .back {
   transform: rotateY(180deg);
 }
+
 .back button {
   position: absolute;
   transform: translate(-50%, -50%);
@@ -92,4 +106,143 @@ a {
   border: none;
   outline: none;
   cursor: pointer;
+}
+
+.btn-container {
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+  margin-top: 1em;
+}
+
+button {
+  padding: 0.75em 1.5em;
+  font-size: 1em;
+  font-weight: 600;
+  color: #ffffff;
+  border: none;
+  border-radius: 0.5em;
+  cursor: pointer;
+  transition:
+    background-color 0.3s,
+    transform 0.3s;
+}
+
+button.edit {
+  background: linear-gradient(45deg, #ff416c, #ff4b2b);
+}
+
+button.add {
+  background: linear-gradient(45deg, #36d1dc, #5b86e5);
+}
+
+button.delete {
+  background: linear-gradient(45deg, #ff512f, #dd2476);
+}
+
+button.prev {
+  background: linear-gradient(45deg, #34c924, #249716);
+}
+
+button.next {
+  background: linear-gradient(45deg, #ffae42, #ff7800);
+}
+
+button:disabled {
+  background: #c0c0c0;
+  cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+button:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+/* Dialog Styles */
+.dialog-trigger {
+  background-color: #ff416c;
+  color: #ffffff;
+  padding: 0.75em 1.5em;
+  font-size: 1em;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.5em;
+  cursor: pointer;
+  transition:
+    background-color 0.3s,
+    transform 0.3s;
+}
+
+.dialog-trigger:hover {
+  transform: scale(1.05);
+}
+
+.dialog-trigger:active {
+  transform: scale(0.95);
+}
+
+.dialog-content {
+  background-color: #1e1e1e;
+  color: #ffffff;
+  padding: 2em;
+  border-radius: 1em;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.dialog-header {
+  text-align: center;
+}
+
+.dialog-title {
+  font-size: 1.5em;
+  font-weight: 700;
+  margin-bottom: 0.5em;
+}
+
+.dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  margin-top: 1em;
+}
+
+.dialog-label {
+  font-size: 1em;
+  font-weight: 500;
+  margin-bottom: 0.5em;
+}
+
+.dialog-input {
+  padding: 0.75em;
+  border-radius: 0.5em;
+  border: none;
+  font-size: 1em;
+  outline: none;
+  color: #000000;
+  background-color: #ffffff;
+}
+
+.save-button {
+  background-color: #b2e39e;
+  color: #000000;
+  padding: 0.75em 1.5em;
+  font-size: 1em;
+  font-weight: 600;
+  border: none;
+  border-radius: 0.5em;
+  cursor: pointer;
+  transition:
+    background-color 0.3s,
+    transform 0.3s;
+}
+
+.save-button:hover {
+  transform: scale(1.05);
+}
+
+.save-button:active {
+  transform: scale(0.95);
 }

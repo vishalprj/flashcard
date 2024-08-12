@@ -1,23 +1,106 @@
+"use client";
+import { useState } from "react";
+import { useGetCardData, useUpdateCard } from "@/app/store/queries";
 import "./card.css";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
 const Card = () => {
+  const { data } = useGetCardData();
+  const { mutate: updateCard } = useUpdateCard();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [question, setQuestion] = useState("");
+  const [answer, setAnswer] = useState("");
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleNext = () => {
+    if (currentIndex < data.length - 1) {
+      setCurrentIndex((prevIndex) => prevIndex + 1);
+    }
+  };
+
+  const handlePrev = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex((prevIndex) => prevIndex - 1);
+    }
+  };
+
+  const handleEdit = () => {
+    const updatedCard = {
+      id: data[currentIndex].id,
+      question,
+      answer,
+    };
+    updateCard(updatedCard);
+    setIsDialogOpen(false);
+  };
+
+  if (!data) return null;
+
   return (
     <div className="wrapper">
       <div className="container">
         <div className="card">
           <div className="front">
-            <img src="https://i.postimg.cc/3rFM5sb4/nike-shoes.png" />
-            <h2>$250</h2>
-            <h3>Nike Awesome Red Shoes</h3>
-            <h6>Special Edition</h6>
+            <h2>{data[currentIndex]?.question}</h2>
           </div>
           <div className="back">
-            <button>Add To Cart</button>
+            <h2>{data[currentIndex]?.answer}</h2>
           </div>
         </div>
       </div>
-      <a href="https://www.youtube.com/@codingArtist" target="_blank">
-        My Youtube Channel
-      </a>
+      <div className="btn-container">
+        <button
+          className="prev"
+          onClick={handlePrev}
+          disabled={currentIndex === 0}
+        >
+          Prev
+        </button>
+        <button
+          className="next"
+          onClick={handleNext}
+          disabled={currentIndex === data.length - 1}
+        >
+          Next
+        </button>
+      </div>
+      <div className="btn-container">
+        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+          <DialogTrigger className="dialog-trigger edit">Edit</DialogTrigger>
+          <DialogContent className="dialog-content">
+            <DialogHeader className="dialog-header">
+              <DialogTitle className="dialog-title">Edit Card</DialogTitle>
+              <div className="dialog-body">
+                <label className="dialog-label">Question</label>
+                <input
+                  type="text"
+                  value={question}
+                  onChange={(e) => setQuestion(e.target.value)}
+                  placeholder="Edit question"
+                  className="dialog-input"
+                />
+                <label className="dialog-label">Answer</label>
+                <input
+                  type="text"
+                  value={answer}
+                  onChange={(e) => setAnswer(e.target.value)}
+                  placeholder="Edit answer"
+                  className="dialog-input"
+                />
+                <button className="save-button" onClick={handleEdit}>
+                  Save
+                </button>
+              </div>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 };
