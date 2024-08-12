@@ -21,56 +21,74 @@ const Card = () => {
   const { data } = useGetCardData();
   const { mutate: updateCard } = useUpdateCard();
   const { mutate: addCard } = useAddCard();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
-  const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
+
+  const [state, setState] = useState({
+    currentIndex: 0,
+    question: "",
+    answer: "",
+    dialogs: {
+      edit: false,
+      add: false,
+      remove: false,
+    },
+  });
 
   const handleNext = () => {
-    if (currentIndex < data.length - 1) {
-      setCurrentIndex((prevIndex) => prevIndex + 1);
+    if (state.currentIndex < data.length - 1) {
+      setState((prev) => ({ ...prev, currentIndex: prev.currentIndex + 1 }));
     }
   };
   const handlePrev = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex((prevIndex) => prevIndex - 1);
+    if (state.currentIndex > 0) {
+      setState((prev) => ({ ...prev, currentIndex: prev.currentIndex - 1 }));
     }
   };
 
   const openEditDialog = () => {
-    setQuestion(data[currentIndex]?.question || "");
-    setAnswer(data[currentIndex]?.answer || "");
-    setIsEditDialogOpen(true);
+    setState((prev) => ({ ...prev, dialogs: { ...prev.dialogs, edit: true } }));
+  };
+  const openAddDialog = () => {
+    setState((prev) => ({ ...prev, dialogs: { ...prev.dialogs, add: true } }));
+  };
+  const openRemoveDialog = () => {
+    setState((prev) => ({
+      ...prev,
+      dialogs: { ...prev.dialogs, remove: true },
+    }));
   };
 
   const handleEdit = () => {
     const updatedCard = {
-      id: data[currentIndex].id,
-      question,
-      answer,
+      id: data[state.currentIndex].id,
+      question: state.question,
+      answer: state.answer,
     };
     updateCard(updatedCard);
-    setIsEditDialogOpen(false);
+    setState((prev) => ({
+      ...prev,
+      dialogs: { ...prev.dialogs, edit: false },
+    }));
   };
 
   const handleAddCard = async () => {
     const newCard = {
-      question,
-      answer,
+      question: state.question,
+      answer: state.answer,
     };
     addCard(newCard);
-    setIsAddDialogOpen(false);
+    setState((prev) => ({ ...prev, dialogs: { ...prev.dialogs, add: false } }));
   };
 
   const handleDeleteCard = async () => {
     const cardId = {
-      id: data?.[currentIndex]?.id,
+      id: data?.[state.currentIndex]?.id,
     };
     await deleteCard(cardId);
     toast.success("Card deleted successfully");
-    setIsRemoveDialogOpen(false);
+    setState((prev) => ({
+      ...prev,
+      dialogs: { ...prev.dialogs, remove: false },
+    }));
   };
   if (!data) return null;
 
@@ -79,10 +97,10 @@ const Card = () => {
       <div className="container">
         <div className="card">
           <div className="front">
-            <h2>{data[currentIndex]?.question}</h2>
+            <h2>{data[state.currentIndex]?.question}</h2>
           </div>
           <div className="back">
-            <h2>{data[currentIndex]?.answer}</h2>
+            <h2>{data[state.currentIndex]?.answer}</h2>
           </div>
         </div>
       </div>
@@ -90,20 +108,28 @@ const Card = () => {
         <button
           className="prev"
           onClick={handlePrev}
-          disabled={currentIndex === 0}
+          disabled={state.currentIndex === 0}
         >
           Prev
         </button>
         <button
           className="next"
           onClick={handleNext}
-          disabled={currentIndex === data.length - 1}
+          disabled={state.currentIndex === data.length - 1}
         >
           Next
         </button>
       </div>
       <div className="btn-container">
-        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+        <Dialog
+          open={state.dialogs.edit}
+          onOpenChange={(open) =>
+            setState((prev) => ({
+              ...prev,
+              dialogs: { ...prev.dialogs, edit: open },
+            }))
+          }
+        >
           <DialogTrigger
             className="dialog-trigger edit"
             onClick={openEditDialog}
@@ -117,16 +143,20 @@ const Card = () => {
                 <label className="dialog-label">Question</label>
                 <input
                   type="text"
-                  value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
+                  value={state.question}
+                  onChange={(e) =>
+                    setState((prev) => ({ ...prev, question: e.target.value }))
+                  }
                   placeholder="Edit question"
                   className="dialog-input"
                 />
                 <label className="dialog-label">Answer</label>
                 <input
                   type="text"
-                  value={answer}
-                  onChange={(e) => setAnswer(e.target.value)}
+                  value={state.answer}
+                  onChange={(e) =>
+                    setState((prev) => ({ ...prev, answer: e.target.value }))
+                  }
                   placeholder="Edit answer"
                   className="dialog-input"
                 />
@@ -137,11 +167,16 @@ const Card = () => {
             </DialogHeader>
           </DialogContent>
         </Dialog>
-        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogTrigger
-            className="dialog-trigger add"
-            onClick={() => setIsAddDialogOpen(true)}
-          >
+        <Dialog
+          open={state.dialogs.add}
+          onOpenChange={(open) =>
+            setState((prev) => ({
+              ...prev,
+              dialogs: { ...prev.dialogs, add: open },
+            }))
+          }
+        >
+          <DialogTrigger className="dialog-trigger add" onClick={openAddDialog}>
             Add
           </DialogTrigger>
           <DialogContent className="dialog-content">
@@ -151,16 +186,20 @@ const Card = () => {
                 <label className="dialog-label">Question</label>
                 <input
                   type="text"
-                  value={question}
-                  onChange={(e) => setQuestion(e.target.value)}
+                  value={state.question}
+                  onChange={(e) =>
+                    setState((prev) => ({ ...prev, question: e.target.value }))
+                  }
                   placeholder="Add question"
                   className="dialog-input"
                 />
                 <label className="dialog-label">Answer</label>
                 <input
                   type="text"
-                  value={answer}
-                  onChange={(e) => setAnswer(e.target.value)}
+                  value={state.answer}
+                  onChange={(e) =>
+                    setState((prev) => ({ ...prev, answer: e.target.value }))
+                  }
                   placeholder="Add answer"
                   className="dialog-input"
                 />
@@ -171,10 +210,18 @@ const Card = () => {
             </DialogHeader>
           </DialogContent>
         </Dialog>
-        <Dialog open={isRemoveDialogOpen} onOpenChange={setIsRemoveDialogOpen}>
+        <Dialog
+          open={state.dialogs.remove}
+          onOpenChange={(open) =>
+            setState((prev) => ({
+              ...prev,
+              dialogs: { ...prev.dialogs, remove: open },
+            }))
+          }
+        >
           <DialogTrigger
             className="dialog-trigger delete"
-            onClick={() => setIsRemoveDialogOpen(true)}
+            onClick={openRemoveDialog}
           >
             Delete
           </DialogTrigger>
