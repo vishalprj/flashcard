@@ -8,7 +8,7 @@ import {
 } from "react-query";
 
 export const fetchAllCard = async () => {
-  const res = await axios.get("/api/card");
+  const res = await axios.post("/api/card");
   if (!res.data) {
     throw new Error("Response was not ok");
   }

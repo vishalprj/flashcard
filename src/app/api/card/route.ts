@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "../../../../prisma/prisma";
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
     const data = await prisma.card.findMany();
     return NextResponse.json({ data: data }, { status: 200 });
