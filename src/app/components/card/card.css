@@ -22,7 +22,9 @@ body {
   position: relative;
   perspective: 37.5em;
 }
-
+.dialog-desc {
+  color: #ffffff;
+}
 a {
   background-color: #303030;
   display: block;

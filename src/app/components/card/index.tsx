@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import {
-  addCard,
+  deleteCard,
   useAddCard,
   useGetCardData,
   useUpdateCard,
@@ -10,6 +10,7 @@ import "./card.css";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -19,10 +20,13 @@ import toast from "react-hot-toast";
 const Card = () => {
   const { data } = useGetCardData();
   const { mutate: updateCard } = useUpdateCard();
+  const { mutate: addCard } = useAddCard();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
 
   const handleNext = () => {
     if (currentIndex < data.length - 1) {
@@ -35,6 +39,12 @@ const Card = () => {
     }
   };
 
+  const openEditDialog = () => {
+    setQuestion(data[currentIndex]?.question || "");
+    setAnswer(data[currentIndex]?.answer || "");
+    setIsEditDialogOpen(true);
+  };
+
   const handleEdit = () => {
     const updatedCard = {
       id: data[currentIndex].id,
@@ -42,19 +52,26 @@ const Card = () => {
       answer,
     };
     updateCard(updatedCard);
-    setIsDialogOpen(false);
+    setIsEditDialogOpen(false);
   };
 
   const handleAddCard = async () => {
-    const updateData = {
+    const newCard = {
       question,
       answer,
     };
-    await addCard(updateData);
-    setIsDialogOpen(false);
-    toast.success("New card added successfully");
+    addCard(newCard);
+    setIsAddDialogOpen(false);
   };
 
+  const handleDeleteCard = async () => {
+    const cardId = {
+      id: data?.[currentIndex]?.id,
+    };
+    await deleteCard(cardId);
+    toast.success("Card deleted successfully");
+    setIsRemoveDialogOpen(false);
+  };
   if (!data) return null;
 
   return (
@@ -86,8 +103,13 @@ const Card = () => {
         </button>
       </div>
       <div className="btn-container">
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger className="dialog-trigger edit">Edit</DialogTrigger>
+        <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
+          <DialogTrigger
+            className="dialog-trigger edit"
+            onClick={openEditDialog}
+          >
+            Edit
+          </DialogTrigger>
           <DialogContent className="dialog-content">
             <DialogHeader className="dialog-header">
               <DialogTitle className="dialog-title">Edit Card</DialogTitle>
@@ -115,8 +137,13 @@ const Card = () => {
             </DialogHeader>
           </DialogContent>
         </Dialog>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger className="dialog-trigger add">Add</DialogTrigger>
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <DialogTrigger
+            className="dialog-trigger add"
+            onClick={() => setIsAddDialogOpen(true)}
+          >
+            Add
+          </DialogTrigger>
           <DialogContent className="dialog-content">
             <DialogHeader className="dialog-header">
               <DialogTitle className="dialog-title">Add Card</DialogTitle>
@@ -126,7 +153,7 @@ const Card = () => {
                   type="text"
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
-                  placeholder="Edit question"
+                  placeholder="Add question"
                   className="dialog-input"
                 />
                 <label className="dialog-label">Answer</label>
@@ -134,11 +161,32 @@ const Card = () => {
                   type="text"
                   value={answer}
                   onChange={(e) => setAnswer(e.target.value)}
-                  placeholder="Edit answer"
+                  placeholder="Add answer"
                   className="dialog-input"
                 />
                 <button className="save-button" onClick={handleAddCard}>
                   Add New Card
+                </button>
+              </div>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+        <Dialog open={isRemoveDialogOpen} onOpenChange={setIsRemoveDialogOpen}>
+          <DialogTrigger
+            className="dialog-trigger delete"
+            onClick={() => setIsRemoveDialogOpen(true)}
+          >
+            Delete
+          </DialogTrigger>
+          <DialogContent className="dialog-content">
+            <DialogHeader className="dialog-header">
+              <DialogTitle className="dialog-title">Delete Card</DialogTitle>
+              <div className="dialog-body">
+                <DialogDescription className="dialog-desc">
+                  Are you sure you want to delete this card?
+                </DialogDescription>
+                <button className="save-button" onClick={handleDeleteCard}>
+                  Delete
                 </button>
               </div>
             </DialogHeader>

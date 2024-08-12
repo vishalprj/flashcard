@@ -39,6 +39,23 @@ export const useUpdateCard = () => {
 };
 
 // add card
-export const addCard = (data: any) => {
+const addCard = (data: any) => {
   return axios.post("/api/addcard", data);
+};
+
+export const useAddCard = () => {
+  const queryClient = useQueryClient();
+  return useMutation(addCard, {
+    onSuccess: () => {
+      toast.success("New card added successfully");
+      queryClient.invalidateQueries("card");
+    },
+    onError: () => {
+      toast.error("Failed to updated card");
+    },
+  });
+};
+// delete card
+export const deleteCard = (id: any) => {
+  return axios.delete("/api/removecard", { data: id });
 };
